@@ -1,4 +1,4 @@
 # kgu
 
-KGu Mobile App Login base
+KGu Mobile App Login and Register base
 

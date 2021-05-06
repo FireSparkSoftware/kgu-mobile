@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/Cupertino.dart';
 import 'Home.dart';
 import 'register.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+String token2="";
 void main() {
   runApp(MyApp());
 }
 TextEditingController kMail = TextEditingController();
 TextEditingController kPass = TextEditingController();
 String returnM ='';
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -83,17 +86,22 @@ class _LoginState extends State<LoginDemo> {
               width: 250,
               decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [Color(0xff374ABE), Color(0xff64B6FF)]), borderRadius: BorderRadius.circular(9)),
-              child: FlatButton(
+              child: CupertinoButton (
 
                 onPressed: () {
                       sender();
+                      sender();
                       final snackBar = SnackBar(content: Text(returnM));
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  if(returnM == "Successful") { //login state kontrolü//
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (_) => HomePage()));
+                  }
                 },
                 child: Text(
                   'Giriş Yap',
                   style:
-                  TextStyle(color: Colors.white, fontSize: 25),
+                  TextStyle(color: Colors.white),
                 ),
               ),
 
@@ -126,8 +134,8 @@ class _LoginState extends State<LoginDemo> {
   }
 }
 sender() async {
-
-  var response = await http.post(Uri.https('kguproject.herokuapp.com', '/api/users/signin'),
+  var jsonString = "";
+  var response = await http.post(Uri.https('kguproject.herokuapp.com', '/api/users/signin'),//api adresi
     headers: {
       'Content-Type': "application/json",
     },
@@ -136,9 +144,15 @@ sender() async {
       'password':kPass.text
     }),)
       .then((response) {
-        print(kMail.text);
-        print(kPass.text);
-    returnM= response.body;
+      //  print(kMail.text); //debug içindir.
+      //  print(kPass.text); //debug içindir.
+    Map<String, dynamic> user = jsonDecode(response.body);
+    returnM= user['message'];
+    token2= user['token'];
+    // print('message, ${user['message']}!'); //debug içindir.
+    // print('message, ${user['token']}!'); //debug içindir.
+
+
   });
 
 
